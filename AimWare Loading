@@ -6,7 +6,7 @@ local UIGradient = Instance.new("UIGradient")
 local AssetsLoaded = Instance.new("TextLabel")
 
 LoadingScreen.Name = "Loading Screen"
-LoadingScreen.Parent = game.Workspace
+LoadingScreen.Parent = game.CoreGui
 LoadingScreen.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 Main.Name = "Main"
@@ -14,6 +14,7 @@ Main.Parent = LoadingScreen
 Main.BackgroundColor3 = Color3.fromRGB(9, 9, 9)
 Main.Position = UDim2.new(0, 0, -0.100000001, 0)
 Main.Size = UDim2.new(1, 0, 1.10000002, 0)
+Main.Active = true
 
 Holder.Name = "Holder"
 Holder.Parent = Main
