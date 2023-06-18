@@ -1,0 +1,103 @@
+local LoadingScreen = Instance.new("ScreenGui")
+local Main = Instance.new("Frame")
+local Holder = Instance.new("Frame")
+local Bar = Instance.new("Frame")
+local UIGradient = Instance.new("UIGradient")
+local AssetsLoaded = Instance.new("TextLabel")
+
+LoadingScreen.Name = "Loading Screen"
+LoadingScreen.Parent = game.Workspace
+LoadingScreen.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+Main.Name = "Main"
+Main.Parent = LoadingScreen
+Main.BackgroundColor3 = Color3.fromRGB(9, 9, 9)
+Main.Position = UDim2.new(0, 0, -0.100000001, 0)
+Main.Size = UDim2.new(1, 0, 1.10000002, 0)
+
+Holder.Name = "Holder"
+Holder.Parent = Main
+Holder.BackgroundColor3 = Color3.fromRGB(37, 37, 45)
+Holder.BorderSizePixel = 0
+Holder.Position = UDim2.new(0.25, 0, 0.603037834, 0)
+Holder.Size = UDim2.new(0.5, 0, 0.0533892922, 0)
+
+Bar.Name = "Bar"
+Bar.Parent = Holder
+Bar.BackgroundColor3 = Color3.fromRGB(255, 128, 0)
+Bar.BorderSizePixel = 0
+Bar.Size = UDim2.new(0, 0, 1, 0)
+
+UIGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(184, 5, 255)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(255, 255, 255))}
+UIGradient.Rotation = 270
+UIGradient.Parent = Bar
+
+AssetsLoaded.Name = "AssetsLoaded"
+AssetsLoaded.Parent = Holder
+AssetsLoaded.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+AssetsLoaded.BackgroundTransparency = 1.000
+AssetsLoaded.Position = UDim2.new(0, 0, -0.785562098, 0)
+AssetsLoaded.Size = UDim2.new(1, 0, 0.617834687, 0)
+AssetsLoaded.Font = Enum.Font.SourceSans
+AssetsLoaded.Text = "Loading Aimware (0/0)"
+AssetsLoaded.TextColor3 = Color3.fromRGB(241, 241, 241)
+AssetsLoaded.TextScaled = true
+AssetsLoaded.TextSize = 14.000
+AssetsLoaded.TextWrapped = true
+
+local function CHQYIG_fake_script() -- LoadingScreen.Handler 
+	local script = Instance.new('LocalScript', LoadingScreen)
+
+	local ReplicatedFirst = game:GetService("ReplicatedFirst")
+	local ContentProvider = game:GetService("ContentProvider")
+	local TweenService = game:GetService("TweenService")
+	local Player = game:GetService("Players").LocalPlayer
+	
+	local Main = script.Parent:WaitForChild("Main")
+	local Holder = Main:WaitForChild("Holder")
+	
+	ReplicatedFirst:RemoveDefaultLoadingScreen()
+	
+	local Assets = game:GetDescendants()
+	
+	for i = 1, #Assets do
+		local Asset = Assets[i]
+		local Percentage = math.round(i/#Assets * 100)
+		
+		ContentProvider:PreloadAsync({Asset})
+		
+		Holder.AssetsLoaded.Text = "Loading AimWare ("..i.."/"..#Assets..")"
+		
+		TweenService:Create(Holder.Bar, TweenInfo.new(0.1, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.fromScale(Percentage/100, 1)}):Play()
+		
+		if i % 5 == 0 then
+			wait()
+		end
+		
+		if i == #Assets then
+			wait(1)
+		end
+	end
+	
+	local OutTI = TweenInfo.new(1, Enum.EasingStyle.Quint)
+	
+	TweenService:Create(Main, OutTI, {BackgroundTransparency = 1}):Play()
+	
+	for i, ui in pairs(Main:GetChildren()) do
+		if ui.ClassName == "Frame" then
+			TweenService:Create(ui, OutTI, {BackgroundTransparency = 1}):Play()
+			TweenService:Create(ui.Bar, OutTI, {BackgroundTransparency = 1}):Play()
+			TweenService:Create(ui.AssetsLoaded, OutTI, {TextTransparency = 1}):Play()
+			
+		elseif ui.ClassName == "TextLabel" then
+			TweenService:Create(ui, OutTI, {TextTransparency = 1}):Play()
+		end
+		
+		if ui:FindFirstChildWhichIsA("UIStroke") then
+			local Stroke = ui:FindFirstChildWhichIsA("UIStroke")
+			
+			TweenService:Create(Stroke, OutTI, {Transparency = 1}):Play()
+		end
+	end
+end
+coroutine.wrap(CHQYIG_fake_script)()
